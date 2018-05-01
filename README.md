@@ -26,7 +26,7 @@ nmap -T4 -sSVC <IP address of your Windows server> -p 80,443,445
 
    * -T4 sets the timing template to aggressive to make the scan happen more quickly
    * -sSVC specifies that nmap should use the SYN scan technique, should probe open ports to determine information about the service that opened the port, and sets the scripts nmap should use to default
-   * -p 80,443,445
+   * -p specifies which ports to scan once host discovery is complete. In this scenario, we'll be scanning the commonly used web ports 80 and 443, as well as the SMB share port 445.
 
    More information on the commands used, or other information about nmap can be found by running `man nmap`.  
 
