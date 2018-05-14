@@ -133,11 +133,15 @@ john --format=nt hashedpasswords.txt
 
    * For more information on the options that can be used with `john` for more complex cracking processes, you can run `john -h` to display the help text.
 
-3. This should now show you that the Administrator password was successfully cracked to be `Drowssap1`. We can confirm that this is correct through a variety of methods, but for our purposes, we'll mount the protected c$ share on the attack box and write a file to it.
+3. This should now show you that the Administrator password was successfully cracked to be `Drowssap1`. We can confirm that this is correct through a variety of methods, but for our purposes, we'll mount the protected c$ share on the attack box and write a file to it. First, let's list the shares available on the host by running the following command. When prompted, enter the `Drowssap1` password that we cracked earlier.
+
+```bash
+smbclient -L hostname -I 192.168.100.10 -U Administrator
+```
+   * You should see a list of available shares on the host. Let's mount the protected `C$` share by creating a mount point and then mounting the share.
 
 ```bash
 mkdir -p /mnt/atk_share
-smbclient -L hostname -I 192.168.100.10 -U Administrator
 mount -t cifs //192.168.100.10/C$ /mnt/atk_share -o username=Administrator,password=Drowssap1
 ```
 
