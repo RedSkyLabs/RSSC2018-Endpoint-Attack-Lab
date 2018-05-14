@@ -146,7 +146,6 @@ mount -t cifs //192.168.100.10/C$ /mnt/atk_share -o username=Administrator,passw
 ```
 
    * `mkdir` command creates the full directory specified
-   * `smbclient` command lists the shares available on the target host. This will prompt you for the Administrator password, which you should supply the cracked password
    * `mount` command mounts the Windows share to /mnt/atk_share with the username and password specified, and specifies the type as a CIFS share
 
 4. Now we can change directory to the remote share and see if we can write a file on the C:\ directory of the remote host.
