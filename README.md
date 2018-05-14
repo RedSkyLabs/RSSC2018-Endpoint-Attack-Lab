@@ -171,6 +171,11 @@ sessions -K
 
 2. You can now exit metasploit by running `exit`.
 3. On Terminal 2, you can unmount the Windows share by running `umount /mnt/atk_share`.
+4. If you're doing this at RSSC2018 and not at home, please run the reset script to clean the environment for the next user. This can be done on Terminal 2 by running:
+
+```bash
+~/reset_exercise.sh
+```
 
 # Conclusion
 
